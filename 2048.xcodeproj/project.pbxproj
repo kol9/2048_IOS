@@ -13,6 +13,7 @@
 		95DE40F023BE284800B0243B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 95DE40EE23BE284800B0243B /* Main.storyboard */; };
 		95DE40F223BE284C00B0243B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 95DE40F123BE284C00B0243B /* Assets.xcassets */; };
 		95DE40F523BE284C00B0243B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 95DE40F323BE284C00B0243B /* LaunchScreen.storyboard */; };
+		95DE40FD23C07C4200B0243B /* GameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DE40FC23C07C4200B0243B /* GameController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		95DE40F123BE284C00B0243B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		95DE40F423BE284C00B0243B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		95DE40F623BE284C00B0243B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		95DE40FC23C07C4200B0243B /* GameController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +65,7 @@
 				95DE40F123BE284C00B0243B /* Assets.xcassets */,
 				95DE40F323BE284C00B0243B /* LaunchScreen.storyboard */,
 				95DE40F623BE284C00B0243B /* Info.plist */,
+				95DE40FC23C07C4200B0243B /* GameController.swift */,
 			);
 			path = 2048;
 			sourceTree = "<group>";
@@ -139,6 +142,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				95DE40ED23BE284800B0243B /* ViewController.swift in Sources */,
+				95DE40FD23C07C4200B0243B /* GameController.swift in Sources */,
 				95DE40E923BE284800B0243B /* AppDelegate.swift in Sources */,
 				95DE40EB23BE284800B0243B /* SceneDelegate.swift in Sources */,
 			);
