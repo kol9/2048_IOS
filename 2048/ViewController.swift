@@ -15,48 +15,117 @@ class ViewController: UIViewController {
     
     @IBAction func swipeUp(_ sender: Any) {
         gameController.moveUp()
-        gameController.verifyValues()
     }
     
     @IBAction func swipeDown(_ sender: Any) {
         gameController.moveDown()
-        gameController.verifyValues()
     }
-    
     
     @IBAction func swipeLeft(_ sender: Any) {
         gameController.moveLeft()
-        gameController.verifyValues()
     }
     
     @IBAction func swipeRight(_ sender: Any) {
         gameController.moveRight()
-        gameController.verifyValues()
     }
-    @IBAction func click(_ sender: Any) {
-        gameController.moveRight()
-        gameController.verifyValues()
+    
+    @objc func click(_ sender: Any) {
+        gameController.startGame()
     }
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
+        gameController.startGame()
         // Do any additional setup after loading the view.
     }
     
     override func loadView() {
         super.loadView()
-        
-        gameView = GameView(frame: CGRect(x: 2.3, y: 175, width: 0, height: 0))
+        view.backgroundColor = UIColor(red: 242/255, green: 243/255, blue: 245/255, alpha: 1)
+        gameView = GameView(frame: CGRect(x: 2.3, y: 145, width: 0, height: 0))
         
         self.gameController = GameController(gameView: gameView)
         view.addSubview(gameView)
+        let btn = Button(frame: CGRect(x: 70, y: 600, width: 250, height: 40))
+        btn.addTarget(self, action: #selector(click), for: .touchUpInside)
+        view.addSubview(btn)
+    }
+    
+    
+}
+
+
+class Button: UIButton {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         
+        
+        setupView()
+    }
+    
+    func shrink(down: Bool) {
+        UIView.animate(withDuration: 0.15, delay: 0, options: .allowUserInteraction, animations: {
+            if down {
+                self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            } else {
+                self.transform = .identity
+            }
+        }, completion: nil)
+    }
+    
+    override var isHighlighted: Bool {
+        didSet {
+            shrink(down: isHighlighted)
+        }
+    }
+    
+    func setupView() {
+        
+//        addSubview(buttonView)
+        backgroundColor = .white
+        layer.cornerRadius = 10
+        addSubview(labelView)
+        
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOffset = CGSize(width: 5, height: 5)
+        layer.shadowRadius = 5
+        layer.shadowOpacity = 0.3
+    }
+    
+    
+    var labelView: UILabel = {
+        var label = UILabel()
+        label.textAlignment = .center
+        label.contentMode = .scaleToFill
+        label.textColor = .black
+        label.text = "Попробовать ещё раз"
+        label.font = UIFont.boldSystemFont(ofSize: 18)
+        label.adjustsFontSizeToFitWidth = true
+        return label
+    }()
+    
+    
+    var buttonView: UIButton = {
+        var button = UIButton()
+        button.backgroundColor = .white
+        button.layer.cornerRadius = 10
+        
+        return button
+    }()
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+//        frame = CGRect(x: 65, y: 600, width: bounds.width, height: bounds.height)
+        labelView.frame = CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height)
     }
     
 }
+
 
 
 class GameView: UIView {
@@ -88,83 +157,48 @@ class GameView: UIView {
         }
     }
     
-    
-    func moveCells(by mtr: [[(Int, Int)]], type: Int) {
-        UIView.animate(withDuration: 0.3, animations: {
-          
-            // 0 - right
-            // 1 - left
-            // 2 - up
-            // 3 - down
+    #warning("Fix algorithm, and removing from superView for cellViews")
+    func moveCells(by mtr: [[(Int, Int)]], gameState: [[Int]], completion: @escaping (_ success: Bool) -> Void) {
+        UIView.animate(withDuration: 0.15, animations: {
             
-            
-            
-            let I = (0...3)
-            let J = (0...3)
-            
-            
-            
-            if type == 1 {
-                for i in I {
-                    for j in J {
-                        if mtr[i][j] != (0, 0) {
-                            if let cell = self.gameCells[i][j] {
-                                
-                                cell.transform = cell.transform.translatedBy(x: CGFloat(mtr[i][j].1 * 94), y: CGFloat(mtr[i][j].0 * 94))
-                                
-                                self.gameCells[i + mtr[i][j].0][j + mtr[i][j].1]?.removeFromSuperview()
-                                self.gameCells[i + mtr[i][j].0][j + mtr[i][j].1] = cell
-                            }
-                            self.gameCells[i][j] = nil
-                        }
-                    }
-                }
-            } else if type == 3 {
-                for j in J {
-                    for i in I.reversed() {
-                        if mtr[i][j] != (0, 0) {
-                            if let cell = self.gameCells[i][j] {
-                                
-                                cell.transform = cell.transform.translatedBy(x: CGFloat(mtr[i][j].1 * 94), y: CGFloat(mtr[i][j].0 * 94))
-                                
-                                self.gameCells[i + mtr[i][j].0][j + mtr[i][j].1]?.removeFromSuperview()
-                                self.gameCells[i + mtr[i][j].0][j + mtr[i][j].1] = cell
-                            }
-                            self.gameCells[i][j] = nil
-                        }
-                    }
-                }
-            } else if type == 0 {
-                for i in I {
-                    for j in J.reversed() {
-                        if mtr[i][j] != (0, 0) {
-                            if let cell = self.gameCells[i][j] {
-                                
-                                cell.transform = cell.transform.translatedBy(x: CGFloat(mtr[i][j].1 * 94), y: CGFloat(mtr[i][j].0 * 94))
-                                
-                                self.gameCells[i + mtr[i][j].0][j + mtr[i][j].1]?.removeFromSuperview()
-                                self.gameCells[i + mtr[i][j].0][j + mtr[i][j].1] = cell
-                            }
-                            self.gameCells[i][j] = nil
-                        }
-                    }
-                }
-            } else {
-                for j in J{
-                    for i in I {
-                        if mtr[i][j] != (0, 0) {
-                            if let cell = self.gameCells[i][j] {
-                                
-                                cell.transform = cell.transform.translatedBy(x: CGFloat(mtr[i][j].1 * 94), y: CGFloat(mtr[i][j].0 * 94))
-                                
-                                self.gameCells[i + mtr[i][j].0][j + mtr[i][j].1]?.removeFromSuperview()
-                                self.gameCells[i + mtr[i][j].0][j + mtr[i][j].1] = cell
-                            }
-                            self.gameCells[i][j] = nil
+            for i in 0...3 {
+                for j in 0...3 {
+                    if mtr[i][j] != (0, 0) {
+                        if let cell = self.gameCells[i][j] {
+                            cell.transform = cell.transform.translatedBy(x: CGFloat(mtr[i][j].1 * 94), y: CGFloat(mtr[i][j].0 * 94))
+                            
                         }
                     }
                 }
             }
+        }, completion: {_ in
+            
+            for i in 0...3 {
+                for j in 0...3 {
+                    self.gameCells[i][j]?.removeFromSuperview()
+                    self.gameCells[i][j] = nil
+                    
+                    
+                    if gameState[i][j] != 0 {
+                        let value = gameState[i][j]
+                        let cell = GameCell(frame: CGRect(x: j * 94, y: i * 94, width: 89, height: 89))
+                        cell.backView.backgroundColor = UIColor.getColorByValue(gameState[i][j])
+                        if value <= 32 {
+                            cell.labelView.textColor = .black
+                        } else {
+                            cell.labelView.textColor = .white
+                        }
+                        cell.labelView.text = String(gameState[i][j])
+                        self.mainView.addSubview(cell)
+                        self.gameCells[i][j] = cell
+                        UIView.animate(withDuration: 0.1, animations: {
+                            cell.backView.backgroundColor = UIColor.getColorByValue(gameState[i][j])
+                        })
+                    }
+                }
+            }
+            
+            completion(true)
         })
         
     }
@@ -172,29 +206,39 @@ class GameView: UIView {
     func addNewElement(at: (Int, Int), value: Int) {
         let cell = GameCell(frame: CGRect(x: at.1 * 94, y: at.0 * 94, width: 89, height: 89))
         cell.labelView.text = String(value)
+        if value <= 32 {
+            cell.labelView.textColor = .black
+        } else {
+            cell.labelView.textColor = .white
+        }
+        cell.backView.backgroundColor = UIColor.getColorByValue(value)
+        cell.alpha = 0
+        
         mainView.addSubview(cell)
         gameCells[at.0][at.1] = cell
+        cell.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
+        
+        UIView.animate(withDuration: 0.1, animations: {
+            cell.transform = .identity
+            cell.alpha = 1
+        })
     }
     
     
     var mainView: UIView = {
         var view = UIView()
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = UIColor(red: 242/255, green: 243/255, blue: 245/255, alpha: 1)
         return view
     }()
     
-    var labelView: UILabel = {
-        var label = UILabel()
-        
-        return label
-    }()
+    
     
     var backViews: [UIView] = {
         var views: [UIView] = []
         for _ in 1...16 {
             var view = UIView()
             view.layer.cornerRadius = 15
-            view.backgroundColor = .red
+            view.backgroundColor = UIColor(red: 186/255, green: 193/255, blue: 204/255, alpha: 1)
             views.append(view)
         }
         return views
@@ -211,6 +255,8 @@ class GameView: UIView {
                 backViews[pos].frame = CGRect(x: (j * 94), y: (i * 94), width: 89, height: 89)
             }
         }
+        
+    
         
     }
 }
@@ -258,5 +304,37 @@ class GameCell: UIView {
         super.layoutSubviews()
         backView.frame = CGRect(x: 0, y: 0, width: 89, height: 89)
         labelView.frame = CGRect(x: 0, y: 5, width: bounds.width, height: bounds.height - 10)
+    }
+}
+
+
+extension UIColor {
+    static func getColorByValue(_ value: Int) -> UIColor{
+        switch value {
+        case 2:
+            return UIColor(red: 255/255, green: 255/255, blue: 255/255, alpha: 1)
+        case 4:
+            return UIColor(red: 226/255, green: 227/255, blue: 231/255, alpha: 1)
+        case 8:
+            return UIColor(red: 153/255, green: 222/255, blue: 255/255, alpha: 1)
+        case 16:
+            return UIColor(red: 92/255, green: 179/255, blue: 255/255, alpha: 1)
+        case 32:
+            return UIColor(red: 28/255, green: 139/255, blue: 235/255, alpha: 1)
+        case 64:
+            return UIColor(red: 0/255, green: 100/255, blue: 214/255, alpha: 1)
+        case 128:
+            return UIColor(red: 0/255, green: 74/255, blue: 128/255, alpha: 1)
+        case 256:
+            return UIColor(red: 29/255, green: 62/255, blue: 134/255, alpha: 1)
+        case 512:
+            return UIColor(red: 11/255, green: 44/255, blue: 132/255, alpha: 1)
+        case 1024:
+            return UIColor(red: 0/255, green: 23/255, blue: 178/255, alpha: 1)
+        case 2048:
+            return UIColor(red: 15/255, green: 6/255, blue: 108/255, alpha: 1)
+        default:
+            return .black
+        }
     }
 }
